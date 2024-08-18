@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrainRotter</title>
+    <style>
+        /* Style for the body of the page */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Style for the "ROT MY BRAIN" button */
+        #rotButton {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            background-color: #ff5733;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            z-index: 1000; /* Ensures button stays on top of other elements */
+        }
+
+        /* Change button color on hover */
+        #rotButton:hover {
+            background-color: #ff2e00;
+        }
+
+        /* Style for the text output box */
+        #brainRotOutput {
+            margin: 80px 20px 20px; /* Small, equal margins around the box */
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: justify;
+            overflow-y: hidden; /* Hide overflow */
+            height: calc(100vh - 140px); /* Fill the remaining height */
+            box-sizing: border-box; /* Include padding and border in the width/height calculations */
+        }
+
+        /* Hidden div used for measurement to ensure output fits within the output box */
+        #tempDiv {
+            position: absolute;
+            visibility: hidden;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 600px) {
+            #brainRotOutput {
+                margin: 60px 10px 10px; /* Adjust margins for smaller screens */
+                padding: 15px;
+                height: calc(100vh - 120px); /* Adjust height for smaller screens */
+            }
+
+            #rotButton {
+                top: 10px; /* Adjust top margin for smaller screens */
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+        }
+
+        /* Further adjustments for very small screens */
+        @media (max-width: 400px) {
+            #brainRotOutput {
+                margin: 40px 5px 5px; /* Further adjust margins for very small screens */
+                padding: 10px;
+                height: calc(100vh - 100px); /* Further adjust height for very small screens */
+            }
+
+            #rotButton {
+                top: 5px; /* Further adjust top margin for very small screens */
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Button to generate text -->
+    <button id="rotButton">ROT MY BRAIN</button>
+
+    <!-- Div to display generated text -->
+    <div id="brainRotOutput"></div>
+
+    <!-- Hidden div for calculating text height -->
+    <div id="tempDiv"></div>
+
+    <script>
+        /* Object holding various types of slang or meme-related words */
+        const words = {
+            subjects: [
+                "Skibidi", "Livvy Dunne", "Sigma male", "Freddy Fazbear", "Andrew Tate", "GigaChad", "Kai Cenat", "Fanum tax", "Huggy Wuggy", "Josh Hutcherson",
+                "Nathaniel B", "John Pork", "Grimace", "Nickeh30", "Aiden Ross", "Quandale Dingle", "Ninja", "PewDiePie", "Shroud", "Pokimane",
+                "XQC", "Syndicate", "Ludwig", "Asmongold", "Jacksepticeye", "Valkyrae", "Myth", "Tfue", "H3H3", "Sliker",
+                "Greekgodx", "CourageJD", "Sykkuno", "Squeaky", "Ewok", "DrLupo", "TimTheTatman", "TSM Myth", "LIRIK", "DrDisrespect",
+                "xQcOW", "Summit1G", "BotezLive", "Hafu", "Wilbur Soot", "Tubbo", "Ranboo", "BadBoyHalo", "Dream", "Technoblade",
+                "JackManifold", "Karl Jacobs", "Sapnap", "GeorgeNotFound", "Quackity", "Foolish Gamers", "Wilbur Soot", "Ph1LzA", "Mizkif", "Nadeshot"
+            ],
+            verbs: [
+                "is", "are", "was", "were", "rizzing up", "sussing out", "hitting the griddy",
+                "gooning", "busting down", "grinding", "slaying", "smurfing", "bussing",
+                "flexing", "streaming", "lurking", "chilling", "vibing", "clapping",
+                "yeeting", "snapping"
+            ],
+            adjectives: [
+                "sus", "quirked up", "goated", "busted", "delulu", "based", "cringe",
+                "redpilled", "zesty", "poggers", "gassy", "uncanny", "wholesome",
+                "zany", "quirky", "OP", "drip", "lit", "clout", "vibe", "savage",
+                "mid", "bet", "slaps", "fuego", "fire", "wavy", "top-tier", "flex",
+                "sussy", "no cap", "badass", "litty", "extra"
+            ],
+            objects: [
+                "Baby Gronk", "the imposter", "a sigma grindset", "a smurf cat",
+                "an ankha zone", "the ocky way", "the backrooms", "a rose toy",
+                "Sin City", "a grimace shake", "the pizza", "a foot fetish",
+                "the shadow wizard money gang", "DJ Khaled", "the family guy funny moments compilation",
+                "MrBeast", "the drip", "the squad", "the fam", "the grind", "the flex",
+                "the clout"
+            ],
+            conjunctions: [
+                "and", "but", "or", "because", "so", "although", "if", "when"
+            ],
+            prepositions: [
+                "in", "on", "with", "at", "by", "from", "about", "through", "under",
+                "over", "before", "after", "among", "between", "across", "toward",
+                "within", "around", "beneath", "along", "past"
+            ],
+            relativeConjunctions: [
+                "who", "whom", "whose", "which", "that"
+            ]
+        };
+
+        /* Object holding various types of more conventional words */
+        const normalWords = {
+            subjects: [
+                "the cat", "the dog", "a person", "the teacher", "the president",
+                "an artist", "a scientist", "the engineer", "the doctor", "the student",
+                "a child", "the bird", "the car", "the computer", "a musician",
+                "the athlete", "the chef", "the programmer", "the astronaut",
+                "the writer", "the dancer", "a friend", "the neighbor",
+                "the librarian", "the firefighter", "the police officer",
+                "the influencer", "the gamer", "the vlogger", "the meme lord",
+                "the TikToker", "the streamer", "the entrepreneur", "the lawyer",
+                "the politician", "the executive", "the consultant", "the startup founder",
+                "the journalist", "the chef", "the travel blogger", "the podcaster",
+                "the historian", "the designer", "the architect", "the counselor",
+                "the activist", "the philosopher", "the therapist", "the critic",
+                "the hacker", "the activist", "the advocate", "the organizer",
+                "the mentor", "the student", "the pilot", "the archaeologist"
+            ],
+            verbs: [
+                "is", "are", "was", "were", "running", "jumping", "thinking",
+                "writing", "reading", "speaking", "exploring", "singing",
+                "dancing", "playing", "working", "driving", "flying",
+                "cooking", "cleaning", "teaching", "learning", "watching",
+                "building", "fixing", "designing", "painting", "drawing",
+                "vibing", "crashing", "hanging out", "chilling", "flexing",
+                "slaying", "squading up", "streaming", "gaming", "scrolling",
+                "negotiating", "strategizing", "debating", "analyzing",
+                "executing", "investing", "networking", "presenting", "consulting",
+                "innovating", "executing", "collaborating", "facilitating",
+                "researching", "revolutionizing", "problem-solving", "directing",
+                "capturing", "programming", "organizing", "influencing", "inspiring",
+                "developing", "curating", "coordinating", "strategizing", "mentoring"
+            ],
+            adjectives: [
+                "happy", "sad", "fast", "slow", "intelligent", "curious", "brave",
+                "quiet", "loud", "bright", "strong", "weak", "funny", "serious",
+                "beautiful", "calm", "excited", "tall", "short", "young", "old",
+                "wise", "creative", "friendly", "generous", "polite", "ambitious",
+                "lazy", "shy", "adventurous", "gentle", "harsh", "lit", "epic",
+                "cringe", "fire", "savage", "dope", "chill", "hyped", "sick",
+                "vibey", "wavy", "cool", "extra", "bold", "daring", "elegant",
+                "sophisticated", "dynamic", "versatile", "innovative", "charming",
+                "artistic", "futuristic", "neat", "fresh", "trendy", "vintage",
+                "elegant", "intense", "luminous", "vivid", "timeless", "edgy",
+                "flamboyant", "stunning", "enchanting", "graceful", "powerful",
+                "resilient", "groundbreaking", "transformative", "pioneering", "remarkable"
+            ],
+            objects: [
+                "the ball", "the book", "the house", "the mountain", "the computer",
+                "the ocean", "the star", "the car", "the guitar", "the piano",
+                "the phone", "the door", "the window", "the tree", "the flower",
+                "the river", "the road", "the park", "the sky", "the sun",
+                "the moon", "the forest", "the beach", "the city", "the camera",
+                "the bicycle", "the ship", "the airplane", "the clock",
+                "the garden", "the bed", "the chair", "the lamp", "the meme",
+                "the snack", "the squad", "the stream", "the playlist",
+                "the trend", "the tag", "the post", "the office", "the portfolio",
+                "the meeting", "the report", "the presentation", "the conference",
+                "the investment", "the contract", "the strategy", "the network",
+                "the studio", "the blueprint", "the gadget", "the manuscript",
+                "the artifact", "the sculpture", "the software", "the framework",
+                "the prototype", "the mural", "the exhibit", "the manuscript",
+                "the arena", "the venue", "the stage", "the library", "the lab",
+                "the showroom", "the gallery", "the vault", "the startup", "the venture"
+            ],
+            conjunctions: [
+                "and", "but", "or", "because", "so", "although", "if", "when",
+                "while", "since", "unless", "before", "after", "though",
+                "even though", "whereas", "whether", "as soon as", "provided that",
+                "in case", "unless", "or else", "beforehand", "supposing",
+                "considering that", "given that", "on the condition that",
+                "despite the fact that", "wherein", "whenever", "whilst",
+                "insofar as", "provided that"
+            ],
+            prepositions: [
+                "in", "on", "with", "at", "by", "from", "about", "through",
+                "over", "under", "between", "around", "during", "against", "near",
+                "inside", "outside", "beneath", "beside", "beyond", "within",
+                "above", "below", "throughout", "across", "amid", "alongside",
+                "underneath", "behind", "in front of", "beyond", "among",
+                "opposite", "close to", "next to", "along", "past", "by",
+                "throughout", "amidst", "alongside", "per", "with regard to",
+                "in relation to", "relative to", "underneath", "inside of",
+                "upon", "atop", "toward", "in between", "before", "after"
+            ],
+            relativeConjunctions: [
+                "who", "whom", "whose", "which", "that"
+            ]
+        };
+
+        /* Function to get a random word from either normalWords or words based on a probability */
+        function getRandomWord(type, normalProbability = 0.2) {
+            const wordList = Math.random() < normalProbability ? normalWords[type] : words[type];
+        
+            if (!wordList || wordList.length === 0) {
+                console.error(`Invalid word type: ${type}`);
+                return ''; // Handle as needed
+            }
+        
+            return wordList[Math.floor(Math.random() * wordList.length)];
+        }
+
+        function generateSentence() {
+            const sentenceType = getRandomSentenceType();
+        
+            let sentence = '';
+        
+            switch (sentenceType) {
+                case 'simple':
+                    sentence = generateSimpleSentence();
+                    break;
+                case 'compound':
+                    sentence = generateCompoundSentence();
+                    break;
+                case 'complex':
+                    sentence = generateComplexSentence();
+                    break;
+                case 'compoundComplex':
+                    sentence = generateCompoundComplexSentence();
+                    break;
+                case 'question':
+                    sentence = generateQuestionSentence();
+                    break;
+                case 'imperative':
+                    sentence = generateImperativeSentence();
+                    break;
+                case 'introductory':
+                    sentence = generateIntroductorySentence();
+                    break;
+                default:
+                    console.error('Unknown sentence type');
+            }
+        
+            // Capitalize the first letter and add appropriate punctuation
+            sentence = sentence.charAt(0).toUpperCase() + sentence.slice(1);
+            sentence += sentenceType === 'question' ? '?' : '.';
+        
+            return sentence;
+        }
+        
+        function getRandomSentenceType() {
+            const types = [
+                'simple', 
+                'compound', 
+                'complex', 
+                'compoundComplex', 
+                'question', 
+                'imperative', 
+            ];
+            return types[Math.floor(Math.random() * types.length)];
+        }
+        
+        function generateSimpleSentence() {
+            const subject = getRandomWord('subjects');
+            const verb = getRandomWord('verbs');
+            const adjective = maybeAddWord('adjectives');
+            const object = getRandomWord('objects');
+            const adverb = maybeAddWord('adverbs');
+        
+            return `${subject} ${adverb} ${verb} ${adjective} ${object}`.trim();
+        }
+        
+        function generateCompoundSentence() {
+            const simpleSentence1 = generateSimpleSentence();
+            const conjunction = getRandomWord('conjunctions');
+            const simpleSentence2 = generateSimpleSentence();
+        
+            return `${simpleSentence1} ${conjunction} ${simpleSentence2}`;
+        }
+        
+        function generateComplexSentence() {
+            const simpleSentence = generateSimpleSentence();
+            const relativeConjunction = getRandomWord('relativeConjunctions');
+            const dependentClause = generateSimpleSentence();
+        
+            return `${simpleSentence} ${relativeConjunction} ${dependentClause}`;
+        }
+        
+        function generateCompoundComplexSentence() {
+            const compoundSentence = generateCompoundSentence();
+            const relativeConjunction = getRandomWord('relativeConjunctions');
+            const dependentClause = generateSimpleSentence();
+        
+            return `${compoundSentence} ${relativeConjunction} ${dependentClause}`;
+        }
+        
+        function generateQuestionSentence() {
+            const questionWord = getRandomWord('questionWords');
+            const subject = getRandomWord('subjects');
+            const verb = getRandomWord('verbs');
+            const object = getRandomWord('objects');
+            const adjective = maybeAddWord('adjectives');
+        
+            return `${questionWord} ${verb} ${subject} ${adjective} ${object}`.trim();
+        }
+        
+        function generateImperativeSentence() {
+            const verb = getRandomWord('verbs');
+            const object = getRandomWord('objects');
+            const adverb = maybeAddWord('adverbs');
+        
+            return `${verb} ${object} ${adverb}`.trim();
+        }
+        
+        function maybeAddWord(type) {
+            return Math.random() < 0.5 ? getRandomWord(type) : '';
+        }
+
+        /* Function to generate random text within a given character limit */
+        function generateTextUntilFull() {
+            const outputElement = document.getElementById("brainRotOutput");
+            const tempDiv = document.getElementById("tempDiv");
+
+            let output = "";
+            let heightLimitReached = false;
+
+            while (!heightLimitReached) {
+                const sentence = generateSentence();
+                const tempOutput = output + sentence + " ";
+                tempDiv.textContent = tempOutput; // Use tempDiv to measure height
+
+                // Check if the content height exceeds the output box height
+                if (tempDiv.scrollHeight > outputElement.clientHeight) {
+                    heightLimitReached = true;
+                } else {
+                    output = tempOutput;
+                }
+            }
+
+            // Set final content to outputElement
+            outputElement.textContent = output;
+        }
+
+        /* Event listener for the button to generate and display random text */
+        document.getElementById("rotButton").addEventListener("click", function() {
+            generateTextUntilFull();
+        });
+    </script>
+</body>
+</html>
+
