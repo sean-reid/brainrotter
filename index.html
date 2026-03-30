@@ -4,62 +4,123 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BrainRotter</title>
-    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+    <link rel="icon" href="./favicon.ico" sizes="any">
     <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
-    <link rel="manifest" href="./site.webmanifest">
-    <link rel="mask-icon" href="./safari-pinned-tab.svg" color="#5bbad5">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="theme-color" content="#ffffff">
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+    <meta name="theme-color" content="#0a0a0f">
     <style>
-        /* Style for the body of the page */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+        *, *::before, *::after {
+            box-sizing: border-box;
             margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0a0a0f;
+            --surface: #13131a;
+            --surface-hover: #1a1a24;
+            --border: #1e1e2a;
+            --text: #e4e4e7;
+            --text-dim: #71717a;
+            --accent: #a855f7;
+            --accent-glow: rgba(168, 85, 247, 0.15);
+            --radius: 12px;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
             display: flex;
             flex-direction: column;
             align-items: center;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Style for the "ROT MY BRAIN" button */
-        #rotButton {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 10px 20px;
-            background-color: #ff5733;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            z-index: 1000; /* Ensures button stays on top of other elements */
-        }
-
-        /* Change button color on hover */
-        #rotButton:hover {
-            background-color: #ff2e00;
-        }
-
-        /* Style for the text output box */
-        #brainRotOutput {
-            margin: 80px 20px 20px; /* Small, equal margins around the box */
+        .container {
             width: 100%;
-            max-width: 800px;
-            padding: 20px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: justify;
-            overflow-y: hidden; /* Hide overflow */
-            height: calc(100vh - 140px); /* Fill the remaining height */
-            box-sizing: border-box; /* Include padding and border in the width/height calculations */
+            max-width: 720px;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            height: 100dvh;
         }
 
-        /* Hidden div used for measurement to ensure output fits within the output box */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0 16px;
+            flex-shrink: 0;
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--text);
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        #rotButton {
+            appearance: none;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        #rotButton:hover {
+            background: var(--surface-hover);
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        #rotButton:active {
+            transform: scale(0.97);
+        }
+
+        #brainRotOutput {
+            flex: 1;
+            min-height: 0;
+            padding: 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow-y: hidden;
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text);
+            margin-bottom: 20px;
+            text-align: justify;
+            hyphens: auto;
+        }
+
+        #brainRotOutput:empty::before {
+            content: 'Hit the button to rot your brain...';
+            color: var(--text-dim);
+            font-style: italic;
+        }
+
         #tempDiv {
             position: absolute;
             visibility: hidden;
@@ -67,331 +128,1021 @@
             word-wrap: break-word;
         }
 
-        /* Responsive adjustments for smaller screens */
-        @media (max-width: 600px) {
-            #brainRotOutput {
-                margin: 60px 10px 10px; /* Adjust margins for smaller screens */
-                padding: 15px;
-                height: calc(100vh - 120px); /* Adjust height for smaller screens */
-            }
-
-            #rotButton {
-                top: 10px; /* Adjust top margin for smaller screens */
-                padding: 8px 16px;
-                font-size: 14px;
-            }
+        .fade-in {
+            animation: fadeIn 0.3s ease;
         }
 
-        /* Further adjustments for very small screens */
-        @media (max-width: 400px) {
-            #brainRotOutput {
-                margin: 40px 5px 5px; /* Further adjust margins for very small screens */
-                padding: 10px;
-                height: calc(100vh - 100px); /* Further adjust height for very small screens */
-            }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
 
-            #rotButton {
-                top: 5px; /* Further adjust top margin for very small screens */
-                padding: 6px 12px;
-                font-size: 12px;
+        @media (max-width: 600px) {
+            .container { padding: 0 14px; }
+            header { padding: 14px 0 12px; }
+            .logo { font-size: 16px; }
+            #rotButton { font-size: 13px; padding: 8px 16px; }
+            #brainRotOutput {
+                padding: 16px;
+                font-size: 14px;
+                line-height: 1.65;
+                border-radius: 10px;
+                margin-bottom: 14px;
             }
         }
     </style>
 </head>
 <body>
+    <div class="container">
+        <header>
+            <div class="logo">brain<span>rotter</span></div>
+            <button id="rotButton">ROT MY BRAIN</button>
+        </header>
+        <div id="brainRotOutput"></div>
+    </div>
 
-    <!-- Button to generate text -->
-    <button id="rotButton">ROT MY BRAIN</button>
-
-    <!-- Div to display generated text -->
-    <div id="brainRotOutput"></div>
-
-    <!-- Hidden div for calculating text height -->
     <div id="tempDiv"></div>
 
     <script>
-        /* Object holding various types of slang or meme-related words */
-        const words = {
-            subjects: [
-                "Skibidi", "Livvy Dunne", "Sigma male", "Freddy Fazbear", "Andrew Tate", "GigaChad", "Kai Cenat", "Fanum tax", "Huggy Wuggy", "Josh Hutcherson",
-                "Nathaniel B", "John Pork", "Grimace", "Nickeh30", "Aiden Ross", "Quandale Dingle", "Ninja", "PewDiePie", "Shroud", "Pokimane",
-                "XQC", "Syndicate", "Ludwig", "Asmongold", "Jacksepticeye", "Valkyrae", "Myth", "Tfue", "H3H3", "Sliker",
-                "Greekgodx", "CourageJD", "Sykkuno", "Squeaky", "Ewok", "DrLupo", "TimTheTatman", "TSM Myth", "LIRIK", "DrDisrespect",
-                "xQcOW", "Summit1G", "BotezLive", "Hafu", "Wilbur Soot", "Tubbo", "Ranboo", "BadBoyHalo", "Dream", "Technoblade",
-                "JackManifold", "Karl Jacobs", "Sapnap", "GeorgeNotFound", "Quackity", "Foolish Gamers", "Wilbur Soot", "Ph1LzA", "Mizkif", "Nadeshot"
+    (() => {
+        'use strict';
+
+        // =============================================================
+        //  LEXICON
+        //
+        //  Pure brainrot lexicon. Categories map to CFG non-terminals.
+        // =============================================================
+
+        const L = {
+          brainrot: {
+            // ---- Noun Phrases (subjects/objects) ----
+            ENTITY: [
+                // === Skibidi Toilet universe ===
+                "Skibidi Toilet", "Titan Cameraman", "Titan Speakerman",
+                "Titan TV Man", "the Skibidi Scientist", "G-Toilet",
+                "the Cameraman", "the Speakerman", "the TV Man",
+                "the Skibidi Toilet army", "the upgraded Skibidi Toilet",
+                "the infected Cameraman", "the Astro Toilet",
+                // === Italian brainrot characters ===
+                "Tralalero Tralala", "Bombardiro Crocodilo", "Tung Tung Tung Sahur",
+                "Lirili Larila", "Brr Brr Patapim", "Ballerina Cappuccina",
+                "Trippi Troppi", "Chimpanzini Bananini", "Bommodini Gusini",
+                "Cappuccino Assassino", "Boneca Ambalabu", "Frigo Camelo",
+                "La Vaca Saturno Saturnita", "Bobrito Bandito",
+                "Cocofanto Elefanto", "Shrimpina Gattina", "Espressona Signora",
+                "Orangutini Ananasini", "Blueberrini Octopussini",
+                "Glorbo Fruttodrillo", "Rhino Toasterino", "Tric Trac Baraboom",
+                "Brri Brri Bicus Dicus Bombicus", "Frulli Frulla",
+                // === Streamers / TikTok personalities ===
+                "Kai Cenat", "IShowSpeed", "Duke Dennis", "Fanum",
+                "Adin Ross", "Jynxzi", "CaseOh", "MrBeast",
+                "Baby Gronk", "Livvy Dunne", "Ice Spice", "Nettspend",
+                "the Costco guys", "Hawk Tuah girl", "N&A Productions",
+                "JellyBean", "KSI", "xQc", "Pokimane",
+                "Hailey Welch", "Pinkydoll the NPC queen",
+                "Sketch", "Agent 00", "Fanum Tax Fanum",
+                // === Fictional / meme characters ===
+                "Quandale Dingle", "the Rizzler", "GigaChad",
+                "Freddy Fazbear", "the Grimace Shake", "the Smurf Cat",
+                "the Ohio final boss", "the NPC", "the Rizz God",
+                "the shadow wizard money gang", "the pizza tower guy",
+                "the amogus crewmate", "the sussy imposter",
+                "the Backrooms entity", "King Von ghost",
+                "Huggy Wuggy", "Poppy Playtime", "the Mondstadt incident",
+                "the sussy baka", "the siren head", "the sus jerma face",
+                "the smurf cat mushroom", "the spaghetti monster",
+                "Skibidi DOP DOP Yes Yes", "the sussy among us character",
+                "an NPC villager", "the sussy red crewmate",
+                // === Archetype characters ===
+                "the sigma male", "the alpha wolf", "the beta orbiter",
+                "a level 100 mewer", "the aura farmer", "the goated one",
+                "the main character", "a certified yapper", "an iPad kid",
+                "a chronically online person", "the mog master",
+                "a brain-rotted zoomer", "the Sigma grindset enjoyer",
+                "the aura check survivor", "a mewing streak holder",
+                "a no-fap warrior", "the edge lord", "the looksmax consultant",
+                "a whole ahh moment", "a devious licker",
+                "the discord kitten", "a parasocial Andy", "the gyatt inspector",
+                "your FBI agent", "the Subway Surfers narrator",
+                "a Family Guy cutaway", "the screen recording",
+                "the bottom text", "a 3am challenge YouTuber",
+                "a rose toy ambassador", "the group chat menace",
+                "the unregistered hypercam 2", "low taper fade Ronaldo",
+                "the Italian Senate Genshin player", "the phone guy",
+                "a delulu stan", "a TikTok NPC streamer",
+                "the ocky way", "the brat summer girl", "the demure queen",
+                "the very mindful very cutesy one", "the griddy dancer",
+                "a hawk tuah specialist", "the aura auditor",
+                "the ratio machine", "the W factory", "the L collector",
+                "the caught-in-4K victim", "the FYP algorithm",
+                "a rent-free tenant", "the vibe checker", "the ick magnet",
+                "the beige flag owner", "the situationship survivor",
+                "the Subway Surfers gameplay", "a copium addict",
+                "the yap king", "the glaze lord", "the PSL rater",
+                "the canthal tilt inspector", "the hunter eyes enjoyer",
+                "the bonesmash practitioner", "the heightmaxxer",
+                "the stairmaxxer", "the jelqer", "the red pill guy",
+                "the blackpill nihilist", "the blue pill normie",
+                "the based department caller", "an unironic sigma",
+                "the group chat historian", "a professional glazer",
+                "a deranged fanfic writer", "the timeline menace",
             ],
-            verbs: [
-                "is", "are", "was", "were", "rizzing up", "sussing out", "hitting the griddy",
-                "gooning", "busting down", "grinding", "slaying", "smurfing", "bussing",
-                "flexing", "streaming", "lurking", "chilling", "vibing", "clapping",
-                "yeeting", "snapping"
+            // ---- Transitive verb phrases ----
+            TV: [
+                // === Core brainrot verbs ===
+                "rizzes up", "mogs", "mews at", "hits the Griddy on",
+                "Fanum taxes", "aura checks", "sigma stares at",
+                "gyatt checks", "out-pizzas", "ratio'd",
+                "does the Hawk Tuah on", "NPC walks toward",
+                "devious licks", "no diffs", "hard carries",
+                "soft launches with", "is glazing", "edge lords",
+                "puts the Fanum tax on", "mog walks past",
+                "brain rots with", "unc walks toward", "tweaks over",
+                "ick lists", "cooks", "yaps at", "locks in with",
+                "caseoh's", "is mogging on", "gives aura to",
+                "steals the gyatt of", "collabs with", "farms aura from",
+                "does an aura check on", "skibidis all over",
+                "main characters past",
+                // === Dominance / competition verbs ===
+                "bodies", "clears", "stomps", "washes", "dusts",
+                "dogs on", "violates", "packs up", "sends to the shadow realm",
+                "catches a body on", "drags", "flames", "roasts",
+                "exposes", "ratio's", "puts on blast",
+                "catches in 4K", "screenshots and reports",
+                "sends the Tung Tung Tung on",
+                // === Social / influence verbs ===
+                "gatekeeps", "gaslights", "girlbosses past",
+                "ghosted", "benched", "breadcrumbed", "zombied",
+                "lovebombs", "orbits", "simps for", "thirsts over",
+                "stans", "glazes", "yaps about", "yapocalypses at",
+                "drags into the discourse",
+                "puts on the griddy for", "does a devious lick on",
+                // === Looksmaxxing verbs ===
+                "height mogs", "jaw mogs", "frame mogs",
+                "AMOG's", "looksmaxxes past", "mews in front of",
+                "bone smashes toward", "PSL rates",
+                // === Content creator verbs ===
+                "reacts to", "duets with", "stitches with",
+                "ratio farms", "engagement baits", "rage baits",
+                "content farms", "collabs with", "clickbaits",
+                "parasocially bonds with", "donowalls",
+                "stream snipes", "clout chases", "clout sharks",
+                // === W/L culture verbs ===
+                "gives the W to", "hands the L to", "cope checks",
+                "seethe checks", "touch-grasses", "skill issues",
+                "vibe checks", "fit checks", "reality checks",
+                "Bombardiro Crocodilos on", "Tralalero Tralalas past",
             ],
-            adjectives: [
-                "sus", "quirked up", "goated", "busted", "delulu", "based", "cringe",
-                "redpilled", "zesty", "poggers", "gassy", "uncanny", "wholesome",
-                "zany", "quirky", "OP", "drip", "lit", "clout", "vibe", "savage",
-                "mid", "bet", "slaps", "fuego", "fire", "wavy", "top-tier", "flex",
-                "sussy", "no cap", "badass", "litty", "extra"
+            // ---- Intransitive verb phrases ----
+            IV: [
+                // === Core brainrot states ===
+                "is hitting the Griddy", "is bussin", "is gooning",
+                "is locked in", "is on demon time", "is in their bag",
+                "is yapping", "is tweaking", "is cooked",
+                "is down bad", "is up good", "is mewing",
+                "stays winning", "just exists", "is edging",
+                "is on their villain arc", "is looksmaxxing",
+                "is bonesmashing", "has main character energy",
+                "is literally an NPC", "goes goblin mode",
+                "is the moment", "has no chill",
+                "is giving", "is serving", "is absolutely unhinged",
+                "understood the assignment", "ate and left no crumbs",
+                "did not pass the vibe check", "is chronically online",
+                "is farming aura", "has negative aura",
+                "is in their flop era", "is in their redemption arc",
+                "just dropped their new era", "is lowkey tweaking",
+                // === Performance / excellence states ===
+                "is slaying", "is eating", "is cooking",
+                "is absolutely feasting", "is on a heater",
+                "is in their prime", "is popping off", "is going crazy",
+                "is going dummy", "is going sicko mode",
+                "is having a moment", "is having a glow up",
+                "is in their bag rn", "is cracked", "is built different",
+                "is on their grind", "is on god rn",
+                "is the blueprint", "is a whole mood",
+                // === Negative / failure states ===
+                "is crashing out", "is down horrendous",
+                "is fumbling the bag", "is taking an L",
+                "is catching strays", "is getting packed up",
+                "is getting ratioed", "is getting clowned",
+                "is getting violated", "has fallen off",
+                "is on thin ice", "is in the mud", "is finished",
+                "is washed", "is a walking L", "is cooked beyond repair",
+                "is getting exposed", "is getting dragged",
+                "is getting sent to the shadow realm",
+                // === Emotional / mental states ===
+                "is coping", "is seething", "is malding",
+                "is living rent free", "is crying in the club",
+                "is fighting demons", "is not okay",
+                "is going through it", "is having a villain origin story",
+                "is dissociating", "is touch-starved",
+                "is terminally online", "is doom scrolling",
+                "is in a parasocial relationship", "is gaslighting themselves",
+                "is running on zero sleep and spite",
+                // === Aura / social capital states ===
+                "is gaining aura", "is losing aura",
+                "is aura farming", "has infinite aura",
+                "has negative infinity aura", "is aura bankrupt",
+                "just had an aura explosion", "is on an aura streak",
+                // === Trend / era states ===
+                "is in their brat era", "is being very demure",
+                "is being very mindful very cutesy",
+                "is in their delulu era", "is in their soft launch era",
+                "is in their situationship era",
+                "is in their Roman Empire phase",
+                "is in their no-thoughts-just-vibes era",
+                "is on a sigma grindset", "is on their W arc",
+                "just went six-seven", "is doing the rizzler walk",
+                "is Tralalero Tralala-ing", "is going full Bombardiro",
             ],
-            objects: [
-                "Baby Gronk", "the imposter", "a sigma grindset", "a smurf cat",
-                "an ankha zone", "the ocky way", "the backrooms", "a rose toy",
-                "Sin City", "a grimace shake", "the pizza", "a foot fetish",
-                "the shadow wizard money gang", "DJ Khaled", "the family guy funny moments compilation",
-                "MrBeast", "the drip", "the squad", "the fam", "the grind", "the flex",
-                "the clout"
+            // ---- Adjectives ----
+            ADJ: [
+                // === Core brainrot adjectives ===
+                "sus", "sigma", "based", "goated", "bussin", "mid", "delulu",
+                "zesty", "unhinged", "brainrotted", "fire", "no-cap",
+                "valid", "Ohio-level", "skibidi-coded", "rizz-worthy",
+                "mog-worthy", "aura-maxed", "gyatt-tier", "NPC-coded",
+                "Griddy-ready", "fanum-taxed", "hawk-tuah-certified",
+                "looksmaxxed", "bonesmashed", "cooked", "absolutely diabolical",
+                "lowkey fire", "highkey mid", "unironically goated",
+                "certified classic", "big ahh", "goofy ahh", "devious",
+                "locked in", "ong fr fr", "rent-free",
+                "chronically online", "terminally online", "tweaking",
+                "down bad", "up good", "edged", "mewed", "slay",
+                "ate", "giving", "serving", "whole ahh", "on demon time",
+                // === Quality / tier adjectives ===
+                "peak", "elite", "cracked", "S-tier", "A-tier",
+                "D-tier", "F-tier", "bottom-tier", "god-tier",
+                "top-tier", "built different", "different gravy",
+                "hard", "raw", "gas", "heat", "tuff",
+                "clean", "crispy", "icy", "dripped out",
+                "legendary", "mythical", "iconic", "canon",
+                // === Negative adjectives ===
+                "cringe", "basic", "wack", "ass", "trash",
+                "toxic", "bruh-tier", "down horrendous", "finished",
+                "washed", "flopped", "fumbled", "booty",
+                "chopped", "busted", "janky", "scuffed",
+                "mid at best", "bottom-of-the-barrel", "poverty-tier",
+                // === Personality / vibe adjectives ===
+                "demure", "brat", "mindful", "cutesy",
+                "snatched", "iconic", "camp", "extra", "chaotic",
+                "feral", "unwell", "foul", "wild", "insane",
+                "diabolical", "menacing", "villainous", "evil",
+                "parasocial", "deranged", "chronically online",
+                // === Looksmaxxing adjectives ===
+                "mogged", "fragged", "PSL-rated",
+                "softmaxxed", "hardmaxxed", "frauding",
+                "hunter-eyed", "positive-canthal-tilted",
+                "Chad-coded", "Stacy-coded", "normie-tier",
+                "subhuman-tier", "blackpilled", "redpilled", "bluepilled",
+                // === Italian brainrot adjectives ===
+                "Bombardiro-coded", "Tralalero-pilled",
+                "Tung Tung Tung certified", "Patapim-approved",
+                "Italian brainrot tier",
+                // === Compound intensifier adjectives ===
+                "absolutely unhinged", "certifiably insane",
+                "clinically brainrotted", "cosmically mid",
+                "existentially cooked", "transcendently based",
+                "omega-level sigma", "maximum rizz",
+                "astronomically down bad", "interdimensionally sus",
             ],
-            conjunctions: [
-                "and", "but", "or", "because", "so", "although", "if", "when"
+            // ---- Adverbs / modifiers ----
+            ADV: [
+                // === Truthfulness / emphasis modifiers ===
+                "fr fr", "no cap", "on god", "lowkey", "highkey", "deadass",
+                "unironically", "literally", "straight up", "ngl",
+                "on a stack", "ong", "respectfully", "aggressively",
+                "with full aura", "with zero cap",
+                "on my mama", "on everything", "on my life",
+                "on gang", "on the dead homies", "on Fanum's grave",
+                "swear to god", "I put that on", "periodt",
+                // === Intensity modifiers ===
+                "mad", "hella", "dummy", "crazy", "stupid",
+                "insanely", "absurdly", "disgustingly", "violently",
+                "astronomically", "exponentially", "catastrophically",
+                "unfathomably", "incomprehensibly",
+                // === Manner / style modifiers ===
+                "with the sauce", "with the drip", "with the rizz",
+                "on a different level", "like a sigma", "like a boss",
+                "in 4K", "in HD", "in broad daylight",
+                "silently", "menacingly", "diabolically",
+                "NPC-style", "main-character-energy style",
+                "with zero remorse", "with maximum disrespect",
+                "with the gyatt out", "on demon time",
+                "while hitting the griddy", "while mewing",
+                "with Italian brainrot energy",
+                // === Qualifier modifiers ===
+                "lowkey but highkey", "not even gonna lie",
+                "actually", "genuinely", "legitimately",
+                "no joke", "real talk", "facts",
+                "100%", "a thousand percent", "no kizzy",
             ],
-            prepositions: [
-                "in", "on", "with", "at", "by", "from", "about", "through", "under",
-                "over", "before", "after", "among", "between", "across", "toward",
-                "within", "around", "beneath", "along", "past"
+            // ---- Prepositional phrases / locations ----
+            PP: [
+                // === Cursed / meme locations ===
+                "in Ohio", "in the backrooms", "at 3am", "at 3am in Ohio",
+                "in the shadow realm", "in the void", "in the Skibidi Toilet dimension",
+                "in the phantom zone", "in the upside down",
+                "in the trenches", "in the gulag", "in the mud",
+                "in the bin", "at rock bottom", "in the darkest timeline",
+                "on the edge of the map", "in an unloaded chunk",
+                "in the sewer system under Ohio", "in a Walmart parking lot at 3am",
+                "in a cursed Roblox server", "at the bottom of the ocean",
+                "in a Florida Waffle House", "inside the Among Us vent",
+                "inside the Skibidi Toilet", "in a liminal space",
+                "in the poolrooms", "at the Italian brainrot convention",
+                // === Grind / hustle locations ===
+                "on the sigma grindset", "at the rizz academy",
+                "in the mog zone", "at the mewing dojo",
+                "in the looksmax clinic", "at the Sigma Summit",
+                "at the low taper fade barbershop", "at the gym",
+                "in the PSL rating chamber", "at the bonesmash factory",
+                "at the aura check station", "in the W factory",
+                "at the sigma grindset headquarters",
+                "in the heightmaxxing laboratory",
+                // === Online / digital locations ===
+                "on the FYP", "in the group chat", "in the Discord server",
+                "on the timeline", "in the parasocial trenches",
+                "in the TikTok trenches", "in the TikTok live chat",
+                "on a Subway Surfers screen",
+                "in the Family Guy funny moments compilation",
+                "during an aura farming session", "on main",
+                "on the burner account", "in the Reddit comment section",
+                "in the Twitter replies", "on the finsta",
+                "in the YouTube comments", "on the Twitch chat",
+                "in the Minecraft server", "in the Roblox lobby",
+                "on the Among Us server", "in the Fortnite lobby",
+                "in the Skibidi Toilet fandom wiki",
+                // === Activity / temporal locations ===
+                "at the function", "during a mewing session",
+                "while hitting the Griddy", "on their skibidi arc",
+                "in their villain era", "in their flop era",
+                "in the Costco food court", "on demon time",
+                "during a devious lick attempt",
+                "while doing the griddy on the haters",
+                "in the middle of a rizz attempt",
+                "during an Italian brainrot episode",
+                "while going full Bombardiro Crocodilo",
+                "in the middle of a Tralalero Tralala sighting",
+                "at the brainrot Olympics", "at the cope factory",
+                "during a ratio speedrun", "in the coping chamber",
+                "while on a W streak", "during an L spree",
+                "at the hawk tuah establishment",
             ],
-            relativeConjunctions: [
-                "who", "whom", "whose", "which", "that"
-            ]
+            // ---- Interjections / discourse markers ----
+            INTERJ: [
+                // === Exclamations ===
+                "Sheesh!", "Bruh.", "Gyatt!", "Yeet!", "Slay!",
+                "Periodt.", "Bet.", "Say less.", "Facts.", "W.",
+                "Ayo?", "Pause.", "Nah.", "Oof.", "Yikes.",
+                "Ick.", "Ew.", "Zamn!", "Damn.", "Bro.",
+                "Unc!", "Dawg.", "Fam.", "Gang.", "Twin.",
+                "Chat.", "Bestie.", "Girlie.", "Queen.", "King.",
+                "SKIBIIII!", "HAWK TUAH!", "SIX SEVEN!",
+                "BOMBARDIRO!", "TRALALERO!",
+                // === Discourse openers ===
+                "No cap,", "Respectfully,", "On god,", "Fr fr,",
+                "Nah because", "Ong,", "Deadass,", "Hold up,",
+                "Not gonna lie,", "Hear me out,", "Nah wait,",
+                "Real talk,", "It's giving.", "Lowkey,", "Highkey,",
+                "I'm not even gonna hold you,", "Look,",
+                "Okay but like,", "Yo so basically,",
+                "I'm dead,", "I'm crying,", "I'm screaming,",
+                "Nah fam,", "Bro I swear,", "Ayo wait,",
+                "Now hold on,", "Okay hear me out though,",
+                "No because why is", "Nah who did this,",
+                "This is sending me,", "I'm hollering,",
+                "I can't breathe,", "Somebody come get they mans,",
+                // === Commentary / reaction markers ===
+                "W take:", "L take:", "Massive W:", "Huge L:",
+                "Bro is cooked.", "Chat is this real?",
+                "Nah this is crazy.", "I can't even.",
+                "Bro think he the main character.", "Chat I'm dead.",
+                "This is peak.", "This is mid.", "This is canon.",
+                "This ain't it.", "We move.", "It's over.",
+                "It's so over.", "We are so back.",
+                "It's joever.", "We are so cooked.",
+                "Cope.", "Seethe.", "Mald.", "Touch grass.",
+                "Skill issue.", "Ratio + L + fell off.",
+                "Who asked though?", "Nobody asked.",
+                "Caught in 4K.", "Caught lacking.",
+                "Rent free.", "Main character syndrome.",
+                "The delusion is real.", "The audacity.",
+                "Not the ick.", "Red flag.", "Green flag.",
+                "Beige flag.", "Walking red flag.",
+            ],
+            // ---- Question openers ----
+            QWORD: [
+                // === Basic question openers ===
+                "Why is", "How is", "When did", "What if", "Who let",
+                "Where did", "Why did", "Did", "Has",
+                "Why does", "How does", "What does",
+                // === Brainrot question openers ===
+                "Bro why is", "Chat why is", "Nah why is", "Ayo how is",
+                "Fr why did", "Since when did", "Bro who let",
+                "Chat is", "Dawg why is", "Fam how is",
+                "Nah who let", "Ayo who let", "Wait why is",
+                "Hold up why is", "Bruh how did", "Nah fr why did",
+                "What the sigma is", "What in the Ohio is",
+                "What in the Skibidi Toilet is", "Why on god is",
+                "Bro what in the actual brainrot is",
+                "Chat can someone explain why", "Nah because why is",
+                "Not gonna lie why is", "Since when could",
+                "How in the Bombardiro Crocodilo did",
+                "Why in the Italian brainrot did",
+                "Chat am I tweaking or did",
+                "Is it just me or did", "Does anyone else think",
+                "Can we talk about how", "Why is no one talking about how",
+            ],
+            // ---- Conjunctions ----
+            CONJ: [
+                // === Standard ===
+                "and", "but", "because", "so", "and then",
+                // === Brainrot conjunctions ===
+                "but fr", "because lowkey", "and honestly",
+                "but like", "so basically", "and ngl",
+                "but on god", "and deadass", "because ong",
+                "so like", "and then fr fr", "but no cap",
+                "because actually", "and respectfully",
+                "but unironically", "and I'm not even capping",
+                "so anyway", "and then out of nowhere",
+                "but wait it gets worse", "and you won't believe this but",
+                "because why not", "and that's when",
+                "but the thing is", "so check this out",
+                "and the plot thickens because",
+                "but in a plot twist", "and then the aura shifted because",
+            ],
+            // ---- Relative clauses ----
+            REL: [
+                // === Standard ===
+                "who", "that", "which",
+                // === Brainrot modifiers ===
+                "who literally", "who lowkey", "that deadass",
+                "which honestly", "who fr fr", "that unironically",
+                "who on god", "that no cap", "which ngl",
+                "who allegedly", "that apparently",
+                "who I kid you not", "that suspiciously",
+                "which for some reason", "who despite everything",
+                "that against all odds", "which to everyone's shock",
+                "who in a turn nobody saw coming",
+                "that in classic Ohio fashion",
+                "which in true brainrot form",
+                "who with zero aura", "that with full sigma energy",
+                "which to be fair", "who respectfully",
+                "that menacingly", "who diabolically",
+            ],
+            // ---- Parenthetical asides (SCIgen-style) ----
+            ASIDE: [
+                // === Classic YouTube clickbait ===
+                "(not clickbait)", "(real)", "(gone wrong)",
+                "(emotional)", "(3am challenge)", "(CAUGHT ON CAMERA)",
+                "(cops called)", "(she cried)", "(he left)",
+                "(must watch)", "(you won't believe this)",
+                "(I'm shaking)", "(this is not a drill)",
+                "(ASMR)", "(storytime)", "(part 47)",
+                "(the sequel)", "(director's cut)",
+                "(Subway Surfers gameplay below)",
+                "(family guy funny moments)", "(watch till the end)",
+                "(NPC behavior)", "(caught in 4k)", "(no cap)",
+                "(still mogging)", "(he's actually cooked)",
+                // === Escalation parentheticals ===
+                "(gone sexual)", "(in the hood)", "(almost died)",
+                "(he got jumped)", "(she snapped)", "(I almost got caught)",
+                "(vomit warning)", "(blood warning)", "(cringe warning)",
+                "(jumpscare warning)", "(18+ only)", "(viewer discretion advised)",
+                "(banned from TikTok)", "(deleted scene)",
+                "(the internet needs to see this)",
+                // === Commentary parentheticals ===
+                "(I'm so cooked for this)", "(help me)",
+                "(why is this real)", "(this can't be real)",
+                "(I need therapy)", "(someone call the police)",
+                "(moms would not approve)", "(dad left after this)",
+                "(the simulation is broken)", "(NPC behavior detected)",
+                "(aura: DESTROYED)", "(aura: +1000000)",
+                "(rizz level: MAXIMUM)", "(sigma status: ACHIEVED)",
+                "(mewing streak: BROKEN)", "(Ohio moment)",
+                "(certified brainrot)", "(peak internet)",
+                "(we've peaked as a society)", "(there's no coming back from this)",
+                "(this is why aliens won't visit us)",
+                "(the CIA is watching this)",
+                // === Meta / format parentheticals ===
+                "(part 1 of 739)", "(finale)", "(lore drop)",
+                "(canon)", "(not canon)", "(filler arc)",
+                "(post-credit scene)", "(anime arc)",
+                "(chapter 47: the reckoning)", "(season 3 episode 12)",
+                "(DLC content)", "(patch notes)",
+                "(Italian brainrot version)", "(Skibidi remix)",
+            ],
+            // ---- "According to" / attribution phrases ----
+            ATTRIB: [
+                // === Source-based attributions ===
+                "According to my FYP,", "Based on the group chat lore,",
+                "As the prophecy foretold,", "Sources (trust me bro) confirm",
+                "Multiple TikTok analysts agree that",
+                "The sigma grindset handbook states that",
+                "A recent aura audit revealed that",
+                "After extensive looksmax research,",
+                "Per the Discord server constitution,",
+                "As documented in the Backrooms wiki,",
+                "The urban dictionary definition confirms",
+                "According to the brainrot archives,",
+                "Expert yapping analysis shows that",
+                // === Authority-based attributions ===
+                "The Council of Sigma has determined that",
+                "Per the International Rizz Committee,",
+                "The Aura Police have confirmed that",
+                "According to the Mog Bureau of Investigation,",
+                "The Ohio Department of Brainrot reports that",
+                "Leading gyatt scientists have concluded that",
+                "The National Institute of Yapping states that",
+                "Per the Skibidi Toilet Geneva Convention,",
+                "The Fanum Tax Authority has declared that",
+                "According to classified Backrooms intel,",
+                "The Italian Brainrot Research Institute confirms that",
+                "The Bombardiro Crocodilo Task Force reports that",
+                // === Casual / meme attributions ===
+                "My source is I made it up but",
+                "Trust me bro,", "Chat I'm not lying,",
+                "My FBI agent just texted me and said",
+                "A little bird (actually a Tralalero Tralala) told me that",
+                "The algorithm has spoken and it says",
+                "Every single one of my brain cells agrees that",
+                "The group chat has come to a unanimous decision that",
+                "After consulting with exactly zero experts,",
+                "I don't have proof but I don't have doubts either that",
+                "The vibes suggest that", "My Roman Empire is the fact that",
+                "Not to be a yapper but", "Not to be that person but",
+                "Okay so storytime:", "So get this:",
+                "You're not gonna believe this but",
+            ],
+            // ---- Concluding / consequence phrases ----
+            CONSEQ: [
+                // === Classic conclusions ===
+                "and that's on period", "and everyone clapped",
+                "which is lowkey iconic", "which explains the negative aura",
+                "and the vibes were immaculate", "but the aura was non-recoverable",
+                "causing a massive L", "resulting in a certified W",
+                "leading to an aura explosion", "and nobody was surprised",
+                "and chat went crazy", "which is giving main character energy",
+                "and the group chat has not recovered since",
+                "and honestly same", "and that's just facts",
+                "which is why we can't have nice things",
+                "and the timeline erupted", "but the FYP remained unbothered",
+                "and it was lowkey the most sigma thing ever witnessed",
+                // === Aura consequences ===
+                "and the aura shift was seismic",
+                "causing an aura deficit of -999999",
+                "and the aura points were redistributed",
+                "but the aura was already in the negatives",
+                "resulting in permanent aura damage",
+                "and the aura farm was destroyed",
+                "leading to an aura bankruptcy filing",
+                // === Dramatic conclusions ===
+                "and that's how the Ohio incident started",
+                "and the simulation crashed", "and the NPC broke character",
+                "and the brainrot became self-aware",
+                "and the backrooms expanded another level",
+                "causing a rift in the sigma timeline",
+                "and the Skibidi Toilet dimension collapsed",
+                "and the Italian brainrot multiverse fractured",
+                "and Bombardiro Crocodilo was summoned",
+                "and Tung Tung Tung Sahur appeared",
+                "and the Tralalero Tralala started running",
+                // === Social media consequences ===
+                "and the ratio was instantaneous",
+                "and the post went viral for all the wrong reasons",
+                "and the quote tweets were merciless",
+                "and the comments section became a warzone",
+                "and the screenshots were already in every group chat",
+                "and the TikTok duets were unhinged",
+                "and Twitter had a field day",
+                "and Reddit wrote a thesis about it",
+                "and the Discord server imploded",
+                // === Existential / comedic conclusions ===
+                "and at this point I don't even know anymore",
+                "and honestly we deserve this",
+                "and that's why the aliens haven't contacted us",
+                "and the founding fathers are rolling in their graves",
+                "and the simulation devs are considering a patch",
+                "and nothing has been the same since",
+                "and the copium reserves are depleted",
+                "and there's no recovery from this",
+                "and honestly? valid", "and honestly? mid",
+                "and that's the last straw for this timeline",
+                "and we are so cooked as a species",
+                "and we are so back", "and it's so over",
+                "and the W was massive", "and the L was historic",
+                "but in the end it was kinda peak ngl",
+            ],
+          },
         };
 
-        /* Object holding various types of more conventional words */
-        const normalWords = {
-            subjects: [
-                "the cat", "the dog", "a person", "the teacher", "the president",
-                "an artist", "a scientist", "the engineer", "the doctor", "the student",
-                "a child", "the bird", "the car", "the computer", "a musician",
-                "the athlete", "the chef", "the programmer", "the astronaut",
-                "the writer", "the dancer", "a friend", "the neighbor",
-                "the librarian", "the firefighter", "the police officer",
-                "the influencer", "the gamer", "the vlogger", "the meme lord",
-                "the TikToker", "the streamer", "the entrepreneur", "the lawyer",
-                "the politician", "the executive", "the consultant", "the startup founder",
-                "the journalist", "the chef", "the travel blogger", "the podcaster",
-                "the historian", "the designer", "the architect", "the counselor",
-                "the activist", "the philosopher", "the therapist", "the critic",
-                "the hacker", "the activist", "the advocate", "the organizer",
-                "the mentor", "the student", "the pilot", "the archaeologist"
-            ],
-            verbs: [
-                "is", "are", "was", "were", "running", "jumping", "thinking",
-                "writing", "reading", "speaking", "exploring", "singing",
-                "dancing", "playing", "working", "driving", "flying",
-                "cooking", "cleaning", "teaching", "learning", "watching",
-                "building", "fixing", "designing", "painting", "drawing",
-                "vibing", "crashing", "hanging out", "chilling", "flexing",
-                "slaying", "squading up", "streaming", "gaming", "scrolling",
-                "negotiating", "strategizing", "debating", "analyzing",
-                "executing", "investing", "networking", "presenting", "consulting",
-                "innovating", "executing", "collaborating", "facilitating",
-                "researching", "revolutionizing", "problem-solving", "directing",
-                "capturing", "programming", "organizing", "influencing", "inspiring",
-                "developing", "curating", "coordinating", "strategizing", "mentoring"
-            ],
-            adjectives: [
-                "happy", "sad", "fast", "slow", "intelligent", "curious", "brave",
-                "quiet", "loud", "bright", "strong", "weak", "funny", "serious",
-                "beautiful", "calm", "excited", "tall", "short", "young", "old",
-                "wise", "creative", "friendly", "generous", "polite", "ambitious",
-                "lazy", "shy", "adventurous", "gentle", "harsh", "lit", "epic",
-                "cringe", "fire", "savage", "dope", "chill", "hyped", "sick",
-                "vibey", "wavy", "cool", "extra", "bold", "daring", "elegant",
-                "sophisticated", "dynamic", "versatile", "innovative", "charming",
-                "artistic", "futuristic", "neat", "fresh", "trendy", "vintage",
-                "elegant", "intense", "luminous", "vivid", "timeless", "edgy",
-                "flamboyant", "stunning", "enchanting", "graceful", "powerful",
-                "resilient", "groundbreaking", "transformative", "pioneering", "remarkable"
-            ],
-            objects: [
-                "the ball", "the book", "the house", "the mountain", "the computer",
-                "the ocean", "the star", "the car", "the guitar", "the piano",
-                "the phone", "the door", "the window", "the tree", "the flower",
-                "the river", "the road", "the park", "the sky", "the sun",
-                "the moon", "the forest", "the beach", "the city", "the camera",
-                "the bicycle", "the ship", "the airplane", "the clock",
-                "the garden", "the bed", "the chair", "the lamp", "the meme",
-                "the snack", "the squad", "the stream", "the playlist",
-                "the trend", "the tag", "the post", "the office", "the portfolio",
-                "the meeting", "the report", "the presentation", "the conference",
-                "the investment", "the contract", "the strategy", "the network",
-                "the studio", "the blueprint", "the gadget", "the manuscript",
-                "the artifact", "the sculpture", "the software", "the framework",
-                "the prototype", "the mural", "the exhibit", "the manuscript",
-                "the arena", "the venue", "the stage", "the library", "the lab",
-                "the showroom", "the gallery", "the vault", "the startup", "the venture"
-            ],
-            conjunctions: [
-                "and", "but", "or", "because", "so", "although", "if", "when",
-                "while", "since", "unless", "before", "after", "though",
-                "even though", "whereas", "whether", "as soon as", "provided that",
-                "in case", "unless", "or else", "beforehand", "supposing",
-                "considering that", "given that", "on the condition that",
-                "despite the fact that", "wherein", "whenever", "whilst",
-                "insofar as", "provided that"
-            ],
-            prepositions: [
-                "in", "on", "with", "at", "by", "from", "about", "through",
-                "over", "under", "between", "around", "during", "against", "near",
-                "inside", "outside", "beneath", "beside", "beyond", "within",
-                "above", "below", "throughout", "across", "amid", "alongside",
-                "underneath", "behind", "in front of", "beyond", "among",
-                "opposite", "close to", "next to", "along", "past", "by",
-                "throughout", "amidst", "alongside", "per", "with regard to",
-                "in relation to", "relative to", "underneath", "inside of",
-                "upon", "atop", "toward", "in between", "before", "after"
-            ],
-            relativeConjunctions: [
-                "who", "whom", "whose", "which", "that"
-            ]
-        };
+        // =============================================================
+        //  CFG ENGINE — SCIgen-inspired weighted productions
+        //
+        //  Grammar (simplified notation):
+        //
+        //  S → SIMPLE | COMPOUND | COMPLEX_SUBJ | COMPLEX_OBJ
+        //    | QUESTION | INTERJECTED | ATTRIBUTED | COMPOUND_COMPLEX
+        //
+        //  SIMPLE     → CLAUSE (ADV_SENT)? (ASIDE)?
+        //  COMPOUND   → CLAUSE, CONJ CLAUSE (CONSEQ)?
+        //  COMPLEX_SUBJ → NP, REL VP_FRAG, VP_FRAG (PP)?
+        //  COMPLEX_OBJ  → NP TV NP REL VP_FRAG (PP)?
+        //  QUESTION   → Q_IS NP VP_BARE (PP)? (ASIDE)?
+        //             | Q_DID NP VP_BARE (PP)? (ASIDE)?
+        //  INTERJECTED → INTERJ CLAUSE (CONSEQ)?
+        //  ATTRIBUTED  → ATTRIB CLAUSE (ASIDE)?
+        //  COMPOUND_COMPLEX → CLAUSE, CONJ NP REL VP_FRAG, VP_FRAG
+        //
+        //  CLAUSE     → NP VP
+        //  VP         → TV NP (PP)? | IV (PP)?
+        //  VP_FRAG    → TV NP (PP)? | IV (PP)?       (no subject)
+        //  VP_BARE    → TV_BARE NP | IV_BARE          (no auxiliary)
+        //  NP         → (ADJ)? ENTITY
+        //  ADV_SENT   → sentence-level adverb (at end)
+        // =============================================================
 
-        /* Function to get a random word from either normalWords or words based on a probability */
-        function getRandomWord(type, normalProbability = 0.2) {
-            const wordList = Math.random() < normalProbability ? normalWords[type] : words[type];
-        
-            if (!wordList || wordList.length === 0) {
-                console.error(`Invalid word type: ${type}`);
-                return ''; // Handle as needed
+        const B = L.brainrot;
+
+        function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+        function maybe(fn, p = 0.4) { return Math.random() < p ? fn() : ''; }
+
+        function oneOf(...fns) {
+            const weights = fns.map(f => f.w || 1);
+            const total = weights.reduce((a, b) => a + b, 0);
+            let r = Math.random() * total;
+            for (let i = 0; i < fns.length; i++) {
+                r -= weights[i];
+                if (r <= 0) return fns[i]();
             }
-        
-            return wordList[Math.floor(Math.random() * wordList.length)];
+            return fns[fns.length - 1]();
         }
 
-        function generateSentence() {
-            const sentenceType = getRandomSentenceType();
-        
-            let sentence = '';
-        
-            switch (sentenceType) {
-                case 'simple':
-                    sentence = generateSimpleSentence();
-                    break;
-                case 'compound':
-                    sentence = generateCompoundSentence();
-                    break;
-                case 'complex':
-                    sentence = generateComplexSentence();
-                    break;
-                case 'compoundComplex':
-                    sentence = generateCompoundComplexSentence();
-                    break;
-                case 'question':
-                    sentence = generateQuestionSentence();
-                    break;
-                case 'imperative':
-                    sentence = generateImperativeSentence();
-                    break;
-                case 'introductory':
-                    sentence = generateIntroductorySentence();
-                    break;
-                default:
-                    console.error('Unknown sentence type');
+        function w(fn, weight) { fn.w = weight; return fn; }
+
+        // ---- Leaf expansions ----
+
+        // NP → (ADJ)? ENTITY
+        // Handles article placement: "the goated Rizzler" not "goated the Rizzler"
+        function NP() {
+            const adj = maybe(() => pick(B.ADJ), 0.25);
+            const ent = pick(B.ENTITY);
+            if (!adj) return ent;
+            // Insert adjective after article if entity starts with one
+            const articleMatch = ent.match(/^(the |a |an )/i);
+            if (articleMatch) {
+                const article = articleMatch[1];
+                const rest = ent.slice(article.length);
+                return `${article}${adj} ${rest}`;
             }
-        
-            // Capitalize the first letter and add appropriate punctuation
-            sentence = sentence.charAt(0).toUpperCase() + sentence.slice(1);
-            sentence += sentenceType === 'question' ? '?' : '.';
-        
-            return sentence;
-        }
-        
-        function getRandomSentenceType() {
-            const types = [
-                'simple', 
-                'compound', 
-                'complex', 
-                'compoundComplex', 
-                'question', 
-                'imperative', 
-            ];
-            return types[Math.floor(Math.random() * types.length)];
-        }
-        
-        function generateSimpleSentence() {
-            const subject = getRandomWord('subjects');
-            const verb = getRandomWord('verbs');
-            const adjective = maybeAddWord('adjectives');
-            const object = getRandomWord('objects');
-            const adverb = maybeAddWord('adverbs');
-        
-            return `${subject} ${adverb} ${verb} ${adjective} ${object}`.trim();
-        }
-        
-        function generateCompoundSentence() {
-            const simpleSentence1 = generateSimpleSentence();
-            const conjunction = getRandomWord('conjunctions');
-            const simpleSentence2 = generateSimpleSentence();
-        
-            return `${simpleSentence1} ${conjunction} ${simpleSentence2}`;
-        }
-        
-        function generateComplexSentence() {
-            const simpleSentence = generateSimpleSentence();
-            const relativeConjunction = getRandomWord('relativeConjunctions');
-            const dependentClause = generateSimpleSentence();
-        
-            return `${simpleSentence} ${relativeConjunction} ${dependentClause}`;
-        }
-        
-        function generateCompoundComplexSentence() {
-            const compoundSentence = generateCompoundSentence();
-            const relativeConjunction = getRandomWord('relativeConjunctions');
-            const dependentClause = generateSimpleSentence();
-        
-            return `${compoundSentence} ${relativeConjunction} ${dependentClause}`;
-        }
-        
-        function generateQuestionSentence() {
-            const questionWord = getRandomWord('questionWords');
-            const subject = getRandomWord('subjects');
-            const verb = getRandomWord('verbs');
-            const object = getRandomWord('objects');
-            const adjective = maybeAddWord('adjectives');
-        
-            return `${questionWord} ${verb} ${subject} ${adjective} ${object}`.trim();
-        }
-        
-        function generateImperativeSentence() {
-            const verb = getRandomWord('verbs');
-            const object = getRandomWord('objects');
-            const adverb = maybeAddWord('adverbs');
-        
-            return `${verb} ${object} ${adverb}`.trim();
-        }
-        
-        function maybeAddWord(type) {
-            return Math.random() < 0.5 ? getRandomWord(type) : '';
+            return `${adj} ${ent}`;
         }
 
-        /* Function to generate random text within a given character limit */
-        function generateTextUntilFull() {
-            const outputElement = document.getElementById("brainRotOutput");
-            const tempDiv = document.getElementById("tempDiv");
+        // ---- VP with subject (full clause) ----
 
-            let output = "";
-            let heightLimitReached = false;
+        // Transitive: NP TV NP (PP)?
+        function TRANS_CLAUSE() {
+            const s = NP(), v = pick(B.TV), o = NP();
+            const pp = maybe(() => pick(B.PP), 0.3);
+            return pp ? `${s} ${v} ${o} ${pp}` : `${s} ${v} ${o}`;
+        }
 
-            while (!heightLimitReached) {
-                const sentence = generateSentence();
-                const tempOutput = output + sentence + " ";
-                tempDiv.textContent = tempOutput; // Use tempDiv to measure height
+        // Intransitive: NP IV (PP)?
+        function INTRANS_CLAUSE() {
+            const s = NP(), v = pick(B.IV);
+            const pp = maybe(() => pick(B.PP), 0.35);
+            return pp ? `${s} ${v} ${pp}` : `${s} ${v}`;
+        }
 
-                // Check if the content height exceeds the output box height
-                if (tempDiv.scrollHeight > outputElement.clientHeight) {
-                    heightLimitReached = true;
-                } else {
-                    output = tempOutput;
+        // CLAUSE → TRANS_CLAUSE | INTRANS_CLAUSE
+        function CLAUSE() {
+            return oneOf(w(TRANS_CLAUSE, 3), w(INTRANS_CLAUSE, 2));
+        }
+
+        // ---- VP fragment (no subject) — for relative clauses ----
+
+        function VP_FRAG_TRANS() {
+            const v = pick(B.TV), o = NP();
+            const pp = maybe(() => pick(B.PP), 0.25);
+            return pp ? `${v} ${o} ${pp}` : `${v} ${o}`;
+        }
+
+        function VP_FRAG_INTRANS() {
+            const v = pick(B.IV);
+            const pp = maybe(() => pick(B.PP), 0.3);
+            return pp ? `${v} ${pp}` : v;
+        }
+
+        function VP_FRAG() {
+            return oneOf(w(VP_FRAG_TRANS, 3), w(VP_FRAG_INTRANS, 2));
+        }
+
+        // ---- Question-safe VP forms ----
+        // "is"-questions need VP without leading "is":
+        //   IV "is bussin" → "bussin", IV "is locked in" → "locked in"
+        //   TV "is glazing" → "glazing"
+        // "did"-questions need bare verb:
+        //   TV "rizzes up" → "rizz up" (approximate)
+
+        // For "is" questions, strip leading "is " from IV entries
+        function IV_BARE_IS() {
+            let v = pick(B.IV);
+            // Strip leading "is " for copula/progressive forms
+            if (v.startsWith('is ')) return v.slice(3);
+            // For "has"/"goes"/"stays"/"just" forms, use as-is (they work after "did")
+            return v;
+        }
+
+        function TV_BARE_IS() {
+            let v = pick(B.TV);
+            if (v.startsWith('is ')) return v.slice(3);
+            return v;
+        }
+
+        // Split question openers by auxiliary type
+        const Q_IS = [
+            "Why is", "How is", "Bro why is", "Chat why is",
+            "Nah why is", "Ayo how is", "Chat is", "Dawg why is",
+            "Fam how is", "Wait why is", "Hold up why is",
+            "What the sigma is", "What in the Ohio is",
+            "What in the Skibidi Toilet is", "Why on god is",
+            "Bro what in the actual brainrot is",
+            "Why is no one talking about how",
+        ];
+
+        const Q_DID = [
+            "When did", "Who let", "Why did", "Where did",
+            "Fr why did", "Since when did", "Bro who let",
+            "Nah who let", "Ayo who let", "Bruh how did",
+            "Nah fr why did", "How in the Bombardiro Crocodilo did",
+            "Why in the Italian brainrot did",
+            "Since when could",
+        ];
+
+        const Q_RHETORICAL = [
+            "Does anyone else think", "Can we talk about how",
+            "Chat am I tweaking or is", "Is it just me or is",
+            "Nah because why is", "Not gonna lie why is",
+            "Chat can someone explain why",
+        ];
+
+        // ---- Sentence-level productions ----
+
+        // SIMPLE → CLAUSE (ADV)? (ASIDE)?
+        function S_SIMPLE() {
+            const c = CLAUSE();
+            const adv = maybe(() => pick(B.ADV), 0.18);
+            const aside = maybe(() => pick(B.ASIDE), 0.12);
+            let s = c;
+            if (adv) s += `, ${adv}`;
+            if (aside) s += ` ${aside}`;
+            return s;
+        }
+
+        // COMPOUND → CLAUSE, CONJ CLAUSE (CONSEQ)?
+        function S_COMPOUND() {
+            const c1 = CLAUSE();
+            const conj = pick(B.CONJ);
+            const c2 = CLAUSE();
+            const conseq = maybe(() => pick(B.CONSEQ), 0.22);
+            let s = `${c1}, ${conj} ${c2}`;
+            if (conseq) s += `, ${conseq}`;
+            return s;
+        }
+
+        // COMPLEX (subject relative) → NP, REL VP_FRAG, VP_FRAG (PP)?
+        //   "Kai Cenat, who lowkey mogs GigaChad, is locked in"
+        function S_COMPLEX_SUBJ() {
+            const subj = NP();
+            const rel = pick(B.REL);
+            const relVP = VP_FRAG();
+            const mainVP = VP_FRAG();
+            return `${subj}, ${rel} ${relVP}, ${mainVP}`;
+        }
+
+        // COMPLEX (object relative) → NP TV NP REL VP_FRAG
+        //   "The Rizzler mogs Baby Gronk, who is bussin in Ohio"
+        function S_COMPLEX_OBJ() {
+            const subj = NP();
+            const tv = pick(B.TV);
+            const obj = NP();
+            const rel = pick(B.REL);
+            const relVP = VP_FRAG();
+            return `${subj} ${tv} ${obj}, ${rel} ${relVP}`;
+        }
+
+        // QUESTION ("is" form) → Q_IS NP IV_BARE (PP)? (ASIDE)?
+        //   "Why is Skibidi Toilet bussin in Ohio?"
+        // Only uses intransitive VP (transitive goes through "did" questions)
+        function S_QUESTION_IS() {
+            const q = pick(Q_IS);
+            const subj = NP();
+            const vp = IV_BARE_IS();
+            const pp = maybe(() => pick(B.PP), 0.3);
+            const aside = maybe(() => pick(B.ASIDE), 0.15);
+            let s = `${q} ${subj} ${vp}`;
+            if (pp) s += ` ${pp}`;
+            if (aside) s += ` ${aside}`;
+            return s + '?';
+        }
+
+        // Deconjugate a single word from 3rd-person present to bare infinitive
+        // Handles: "stares"→"stare", "rizzes"→"rizz", "catches"→"catch",
+        //          "mogs"→"mog", "bodies"→"body", "does"→"do"
+        function deconjWord(w) {
+            if (w.length < 3) return w;
+            if (w.endsWith('ies') && w.length > 4) return w.slice(0, -3) + 'y';
+
+            if (w.endsWith('es') && w.length > 3) {
+                const stripS = w.slice(0, -1);   // "stares" → "stare"
+                const stripES = w.slice(0, -2);   // "rizzes" → "rizz"
+                // If stripping just "s" gives a silent-e stem (vowel+consonant+e),
+                // that's the correct base: "stare", "glaze", "flame", "expose"
+                if (/[aeiou][^aeiou]e$/i.test(stripS)) return stripS;
+                // Otherwise strip "es" for sibilant/o stems: "rizz", "catch", "do"
+                return stripES;
+            }
+
+            if (w.endsWith('s') && !w.endsWith('ss') && !w.endsWith('us')) {
+                return w.slice(0, -1);
+            }
+            return w;
+        }
+
+        // Deconjugate a transitive verb phrase from 3rd person to bare infinitive
+        // "rizzes up" → "rizz up", "sigma stares at" → "sigma stare at"
+        function deconjugateTV() {
+            let tv = pick(B.TV);
+            // Skip progressive forms ("is glazing") — can't follow "did"
+            let attempts = 0;
+            while (tv.startsWith('is ') && attempts++ < 5) tv = pick(B.TV);
+            if (tv.startsWith('is ')) return 'mog';
+
+            // Strip apostrophe suffixes: ratio'd → ratio, AMOG's → AMOG
+            tv = tv.replace(/'[ds]\b/g, '');
+
+            // Find and deconjugate the first word that looks like a 3rd-person verb
+            const words = tv.split(' ');
+            for (let i = 0; i < words.length; i++) {
+                const w = words[i];
+                if (w.length < 3) continue;
+                // Check if this word looks conjugated (ends in s/es/ies)
+                if (w.endsWith('s') && !w.endsWith('ss') && !w.endsWith('us')) {
+                    words[i] = deconjWord(w);
+                    break;
                 }
             }
-
-            // Set final content to outputElement
-            outputElement.textContent = output;
+            return words.join(' ').trim();
         }
 
-        /* Event listener for the button to generate and display random text */
-        document.getElementById("rotButton").addEventListener("click", function() {
-            generateTextUntilFull();
+        // QUESTION ("did" form) → Q_DID NP TV_BASE NP (PP)?
+        //   "Who let the Rizzler rizz up Baby Gronk at 3am?"
+        function S_QUESTION_DID() {
+            const q = pick(Q_DID);
+            const subj = NP();
+            const tv = deconjugateTV();
+            const obj = NP();
+            const pp = maybe(() => pick(B.PP), 0.25);
+            let s = `${q} ${subj} ${tv} ${obj}`;
+            if (pp) s += ` ${pp}`;
+            return s + '?';
+        }
+
+        // QUESTION (rhetorical) → Q_RHETORICAL NP IV_BARE (PP)?
+        // Most Q_RHETORICAL end with "is" or "how", so use bare IV form
+        function S_QUESTION_RHET() {
+            const q = pick(Q_RHETORICAL);
+            const subj = NP();
+            const vp = IV_BARE_IS();
+            const pp = maybe(() => pick(B.PP), 0.3);
+            let s = `${q} ${subj} ${vp}`;
+            if (pp) s += ` ${pp}`;
+            return s + '?';
+        }
+
+        // ATTRIBUTED → ATTRIB CLAUSE (ASIDE)?
+        function S_ATTRIBUTED() {
+            const attr = pick(B.ATTRIB);
+            const clause = CLAUSE();
+            const aside = maybe(() => pick(B.ASIDE), 0.18);
+            return aside ? `${attr} ${clause} ${aside}` : `${attr} ${clause}`;
+        }
+
+        // INTERJECTED → INTERJ CLAUSE (CONSEQ)?
+        function S_INTERJECTED() {
+            const interj = pick(B.INTERJ);
+            const clause = CLAUSE();
+            const conseq = maybe(() => pick(B.CONSEQ), 0.2);
+            return conseq ? `${interj} ${clause}, ${conseq}` : `${interj} ${clause}`;
+        }
+
+        // COMPOUND_COMPLEX → CLAUSE, CONJ NP, REL VP_FRAG, VP_FRAG
+        function S_COMPOUND_COMPLEX() {
+            const c1 = CLAUSE();
+            const conj = pick(B.CONJ);
+            const subj2 = NP();
+            const rel = pick(B.REL);
+            const relVP = VP_FRAG();
+            const mainVP = VP_FRAG();
+            return `${c1}, ${conj} ${subj2}, ${rel} ${relVP}, ${mainVP}`;
+        }
+
+        // NESTED COMPOUND → CLAUSE, CONJ CLAUSE, CONSEQ
+        function S_NESTED() {
+            const c1 = CLAUSE();
+            const conj = pick(B.CONJ);
+            const c2 = CLAUSE();
+            const conseq = pick(B.CONSEQ);
+            return `${c1}, ${conj} ${c2}, ${conseq}`;
+        }
+
+        // ---- Top-level sentence generator ----
+
+        function generateSentence() {
+            let s = oneOf(
+                w(S_SIMPLE, 18),
+                w(S_COMPOUND, 16),
+                w(S_COMPLEX_SUBJ, 10),
+                w(S_COMPLEX_OBJ, 10),
+                w(S_ATTRIBUTED, 10),
+                w(S_INTERJECTED, 12),
+                w(S_QUESTION_IS, 7),
+                w(S_QUESTION_DID, 5),
+                w(S_QUESTION_RHET, 3),
+                w(S_COMPOUND_COMPLEX, 5),
+                w(S_NESTED, 4),
+            );
+
+            // Normalize whitespace
+            s = s.replace(/\s+/g, ' ').trim();
+
+            // Capitalize first letter
+            s = s.charAt(0).toUpperCase() + s.slice(1);
+
+            // Ensure terminal punctuation
+            if (!/[.!?]$/.test(s)) s += '.';
+
+            return s;
+        }
+
+        // =============================================================
+        //  TEXT FILLING — fill the output box exactly like the original
+        // =============================================================
+
+        function generateTextUntilFull() {
+            const output = document.getElementById('brainRotOutput');
+            const tempDiv = document.getElementById('tempDiv');
+
+            const style = window.getComputedStyle(output);
+            tempDiv.style.width = style.width;
+            tempDiv.style.padding = style.padding;
+            tempDiv.style.fontSize = style.fontSize;
+            tempDiv.style.lineHeight = style.lineHeight;
+            tempDiv.style.fontFamily = style.fontFamily;
+
+            let text = '';
+            let safety = 0;
+            const maxHeight = output.clientHeight;
+
+            while (safety++ < 500) {
+                const sentence = generateSentence();
+                const candidate = text + (text ? ' ' : '') + sentence;
+                tempDiv.textContent = candidate;
+                if (tempDiv.scrollHeight > maxHeight) break;
+                text = candidate;
+            }
+
+            output.textContent = text;
+            output.classList.remove('fade-in');
+            void output.offsetWidth;
+            output.classList.add('fade-in');
+        }
+
+        // =============================================================
+        //  EVENT LISTENERS
+        // =============================================================
+
+        document.getElementById('rotButton').addEventListener('click', generateTextUntilFull);
+
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                if (document.getElementById('brainRotOutput').textContent) {
+                    generateTextUntilFull();
+                }
+            }, 200);
         });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' || e.code === 'Enter') {
+                e.preventDefault();
+                generateTextUntilFull();
+            }
+        });
+    })();
     </script>
 </body>
 </html>
-
