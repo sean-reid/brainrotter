@@ -257,4 +257,13 @@ export const REL = [
     "which for legal reasons is a joke",
     "who off the record",
     "that the algorithm keeps recommending",
+    "who against medical advice",
+    "that in violation of several treaties",
+    "which technically speaking",
+    "who in an unprecedented move",
+    "that without consulting anyone",
+    "which in a display of hubris",
+    "who to the horror of witnesses",
+    "that in a moment of clarity",
+    "which after years of foreshadowing",
 ];

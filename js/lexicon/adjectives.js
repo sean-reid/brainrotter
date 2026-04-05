@@ -134,4 +134,28 @@ export const ADJ = [
     "pixel-perfect", "frame-perfect",
     "RNG-blessed", "RNG-cursed",
     "save-scummed", "permadeath-coded",
+
+    // === Food-coded adjectives ===
+    "unseasoned", "well-seasoned", "deep-fried",
+    "raw (like sushi)", "half-baked", "overcooked",
+    "marinated in delusion", "basted in cope",
+    "room-temperature IQ", "lukewarm take-having",
+    "microwave-dinner-coded", "Michelin-star",
+
+    // === Weather / nature adjectives ===
+    "drought-tier", "flood-level", "tsunami-grade",
+    "earthquake-coded", "solar-flare-pilled",
+    "extinction-event-tier", "ice-age-coded",
+    "volcano-coded", "monsoon-brained",
+
+    // === Sound-coded adjectives ===
+    "eardrum-shattering", "whisper-quiet menace",
+    "bass-boosted", "auto-tuned", "reverb-coded",
+    "dial-up-speed", "earworm-infected",
+
+    // === Architecture / structure adjectives ===
+    "load-bearing", "structurally unsound",
+    "condemned-building-coded", "penthouse-tier",
+    "basement-dwelling", "attic-coded",
+    "foundation-cracking", "earthquake-resistant",
 ];

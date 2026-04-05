@@ -90,6 +90,18 @@ export const TV = [
     "serves a cease and desist to", "files a noise complaint about",
     "sends a formal ratio to", "issues a vibe violation to",
     "suspends the aura license of", "revokes the sigma card of",
+
+    // === Emotional manipulation verbs ===
+    "guilt trips", "trauma dumps on", "weaponizes therapy speak against",
+    "boundaries-checks", "emotionally blackmails",
+    "sends a passive aggressive emoji to", "vaguetweets about",
+    "starts a petition against", "writes a manifesto about",
+
+    // === Physical comedy verbs ===
+    "drop kicks", "suplexes", "RKO's out of nowhere",
+    "powerbombs", "tombstone piledrivers",
+    "peoples-elbows", "stone cold stuns",
+    "hadoukens", "falcon punches", "kamehamehas",
 ];
 
 export const IV = [
@@ -216,4 +228,27 @@ export const IV = [
     "is in their roman empire of roman empires era",
     "is in their delusional self-confidence era",
     "is in their I-don't-chase-I-attract era",
+
+    // === Physical states ===
+    "is standing menacingly", "is T-posing to assert dominance",
+    "is power walking away from the explosion",
+    "is naruto-running through the hallway",
+    "is planking in a cursed location",
+    "is doing the Macarena ironically",
+    "is breakdancing at a funeral",
+    "is slow clapping sarcastically",
+
+    // === Meta / self-aware states ===
+    "is aware they are in a simulation",
+    "is breaking the fourth wall",
+    "is reading their own character arc",
+    "is speedrunning the plot",
+    "is skipping the tutorial",
+    "is stuck in a dialogue loop",
+    "is buffering emotionally",
+    "is loading their next personality",
+    "is experiencing a plot hole",
+    "is getting retconned",
+    "is being written out of the script",
+    "is in the blooper reel of life",
 ];

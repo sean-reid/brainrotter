@@ -158,4 +158,55 @@ export const ENTITY = [
     "the block button enthusiast", "the DNI list enforcer",
     "the carrd link bio", "the priv account lurker",
     "the alt account empire builder",
+
+    // === Food / brand memes ===
+    "the Grimace Shake survivor", "the Benadryl hat man",
+    "the Costco hotdog", "the Chick-fil-A cow",
+    "the Travis Scott meal", "the Prime Hydration bottle",
+    "the Lunchly enjoyer", "the Stanley cup girlie",
+    "the Celsius can", "the Chipotle bowl ratio",
+    "a Dollar Tree sigma", "a Walmart cryptid",
+    "the Target self-checkout NPC", "a gas station sushi connoisseur",
+    "the expired energy drink", "the 3am Taco Bell cashier",
+
+    // === Sports / athlete memes ===
+    "LeBron James (the GOAT debate)", "Cristiano Ronaldo (SIUUU)",
+    "Messi but humble", "Neymar rolling arc",
+    "the Kylian Mbappe turtle meme", "Haaland robot mode",
+    "Steph Curry shimmy", "Luka Doncic complaining to the ref",
+    "the NFL kicker who missed", "the waterboy",
+    "the mascot who got too aggressive",
+    "the benchwarmer with main character energy",
+
+    // === Historical / absurdist ===
+    "Abraham Lincoln but with drip", "Napoleon short king energy",
+    "Sun Tzu but brainrotted", "Genghis Khan sigma arc",
+    "Cleopatra slay queen", "the founding fathers in the group chat",
+    "caveman who discovered fire", "the asteroid that killed the dinosaurs",
+    "the mitochondria (powerhouse of the cell)",
+    "the Spanish Inquisition (nobody expected)",
+    "Rasputin (unkillable sigma)", "Diogenes the original menace",
+    "Julius Caesar (betrayal arc)", "Achilles heel-havin hero",
+
+    // === AI / tech memes ===
+    "the AI chatbot", "the sentient algorithm",
+    "the deepfake generator", "ChatGPT hallucination",
+    "the AI art prompter", "the blockchain bro",
+    "the crypto rugpull survivor", "the NFT screenshot enjoyer",
+    "the metaverse avatar nobody uses",
+    "the smart fridge", "Alexa eavesdropping",
+    "the Roomba that gained consciousness",
+    "the printer that always jams", "the CAPTCHA test",
+
+    // === Animals / nature memes ===
+    "the Shiba Inu (much wow)", "the Cheems",
+    "the Doge", "the sad Hamster", "the orange cat",
+    "the cat who knocks things off tables",
+    "the emotional support alligator",
+    "the raccoon with a donut", "the seal that chose violence",
+    "the capybara (OK I pull up)", "the quokka selfie",
+    "the pigeon with a bread loaf", "the pelican who tried to eat a phone",
+    "the mantis shrimp (sees more colors than you)",
+    "the orca (killer whale menace)",
+    "the opossum (plays dead professionally)",
 ];
